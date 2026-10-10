@@ -24,6 +24,7 @@ module alu_tb;
         src_a = alu_result;
         #1;
         alu_control = 3'b001;
+        #1;
         $finish;
     end
 

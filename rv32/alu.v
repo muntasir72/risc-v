@@ -1,7 +1,7 @@
 module alu (
     input wire [31:0] src_a, src_b, // alu inputs
     input wire [2:0] alu_control, // tells alu which instruction to execute
-    output reg [31:0] alu_result    // alu output
+    output reg [31:0] alu_result // alu output
 );
     always @(*) begin
         case (alu_control)
