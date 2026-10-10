@@ -9,7 +9,7 @@ module alu (
             3'b001: alu_result = src_a - src_b;       // SUB
             3'b010: alu_result = src_a & src_b;       // AND
             3'b011: alu_result = src_a | src_b;       // OR
-            3'b101: alu_result = (src_a < src_b) ? 32'b1 : 32'b0; // SLT
+            3'b101: alu_result = ($signed(src_a) < $signed(src_b)) ? 32'd1 : 32'd0;
             default: alu_result = 32'b0;
         endcase
     end
