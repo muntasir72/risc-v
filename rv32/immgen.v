@@ -3,7 +3,11 @@ module immgen (
     output reg [31:0] imm
 );
     always @(*) begin
-        // the value of sign bit (instr[31] is extended 20 times)
-        imm = {{20{instr[31]}}, instr[31:20]};
+        if(instr[6:0] == 7'b0100011) begin
+            imm = {{20{instr[31]}}, instr[31:25], instr[11:7]}; // S type instruction
+        end
+        else begin
+            imm = {{20{instr[31]}}, instr[31:20]}; // I type instruction
+        end
     end
 endmodule

@@ -2,7 +2,7 @@ module control_unit (
     input wire [6:0] opcode,
     input wire [2:0] func3,
     input wire [6:0] func7,
-    output reg reg_write, alu_src,
+    output reg reg_write, alu_src, mem_write, result_src,
     output reg [5:0] alu_control
 );
 
@@ -11,6 +11,8 @@ module control_unit (
         reg_write = 1'b0;
         alu_src = 1'b0;
         alu_control = 6'b111111;
+        mem_write = 1'b0;
+        result_src = 1'b0;
 
         // R-Type or I-Type
         if (opcode == 7'b0110011 || opcode == 7'b0010011) begin
@@ -37,6 +39,19 @@ module control_unit (
                 3'b110: alu_control = 6'b001000; // OR / ORI
                 3'b111: alu_control = 6'b001001; // AND / ANDI
             endcase
+        end
+        // Load instruction
+        else if (opcode == 7'b0000011) begin
+            alu_src = 1'b1;      // use immediate for address
+            reg_write = 1'b1;    // save to register
+            result_src = 1'b1;   // save from MEMORY, not ALU
+            alu_control = 6'b000000; // ADD (rs1 + imm)
+        end
+        // S-type instruction
+        else if (opcode == 7'b0100011) begin
+            alu_src = 1'b1;      // use immediate for address
+            mem_write = 1'b1;    // enable memory writing
+            alu_control = 6'b000000; // ADD (rs1 + imm)
         end
     end
 

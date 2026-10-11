@@ -5,8 +5,10 @@ module riscv_rtype_core (
     wire [31:0] pc, instr;
     wire [31:0] rs1_data, rs2_data, alu_result;
     wire [31:0] imm, src_b;
-    wire reg_write, alu_src;
+
+    wire reg_write, alu_src, mem_write, result_src;
     wire [5:0] alu_control;
+    wire [31:0] read_data, writeback_data;
 
     // 1. PC Logic
     pc_reg pcreg (
@@ -35,7 +37,9 @@ module riscv_rtype_core (
         .func7(instr[31:25]),
         .reg_write(reg_write), 
         .alu_control(alu_control),
-        .alu_src(alu_src)
+        .alu_src(alu_src),
+        .mem_write(mem_write),
+        .result_src(result_src)
     );
 
     // 4. Register File 
@@ -45,7 +49,7 @@ module riscv_rtype_core (
         .rs1(instr[19:15]),    // Extracting Source Register 1
         .rs2(instr[24:20]),    // Extracting Source Register 2
         .rd(instr[11:7]),      // Extracting Destination Register
-        .write_data(alu_result), 
+        .write_data(writeback_data), 
         .rs1_data(rs1_data), 
         .rs2_data(rs2_data)
     );
@@ -60,6 +64,15 @@ module riscv_rtype_core (
         .alu_result(alu_result)
     );
 
+    // Data Memory
+    dmem dm (
+        .clk(clk),
+        .mem_write(mem_write),
+        .addr(alu_result),
+        .write_data(rs2_data),
+        .read_data(read_data)
+    );
 
+    assign writeback_data = (result_src) ? read_data : alu_result;
 
 endmodule
