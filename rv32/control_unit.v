@@ -2,7 +2,8 @@ module control_unit (
     input wire [6:0] opcode,
     input wire [2:0] func3,
     input wire [6:0] func7,
-    output reg reg_write, alu_src, mem_write, result_src,
+    output reg reg_write, alu_src, mem_write, branch, jump,
+    output reg [1:0] result_src,
     output reg [5:0] alu_control
 );
 
@@ -12,7 +13,9 @@ module control_unit (
         alu_src = 1'b0;
         alu_control = 6'b111111;
         mem_write = 1'b0;
-        result_src = 1'b0;
+        result_src = 2'b00;
+        branch = 1'b0;
+        jump = 1'b0;
 
         // R-Type or I-Type
         if (opcode == 7'b0110011 || opcode == 7'b0010011) begin
@@ -44,7 +47,7 @@ module control_unit (
         else if (opcode == 7'b0000011) begin
             alu_src = 1'b1;      // use immediate for address
             reg_write = 1'b1;    // save to register
-            result_src = 1'b1;   // save from MEMORY, not ALU
+            result_src = 2'b01;   // save from MEMORY, not ALU
             alu_control = 6'b000000; // ADD (rs1 + imm)
         end
         // S-type instruction
@@ -52,6 +55,19 @@ module control_unit (
             alu_src = 1'b1;      // use immediate for address
             mem_write = 1'b1;    // enable memory writing
             alu_control = 6'b000000; // ADD (rs1 + imm)
+        end
+        // Branch (BEQ, BNE, BLT, BGE, BLTU, BGEU)
+        else if (opcode == 7'b1100011) begin
+            branch = 1'b1; 
+        end
+        // JAL (Jump and Link)
+        else if (opcode == 7'b1101111) begin
+            jump = 1'b1; reg_write = 1'b1; result_src = 2'b10; // Save PC+4 to register
+        end
+        // JALR (Jump and Link Register)
+        else if (opcode == 7'b1100111) begin
+            jump = 1'b1; reg_write = 1'b1; result_src = 2'b10; // Save PC+4 to register
+            alu_src = 1'b1; alu_control = 6'b000000;           // ALU computes (rs1 + imm)
         end
     end
 
