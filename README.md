@@ -1,4 +1,4 @@
-A simple single cycle RISC-V processor in verilog
+A simple single cycle RISC-V rv32i processor in verilog, it implements the essential 37 instructions
 
 # how to run this
 
