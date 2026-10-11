@@ -5,7 +5,7 @@ module regfile (
     input wire [31:0] write_data,   // data being written back
     output wire [31:0] rs1_data, rs2_data // data read from the registers
 );
-    reg [31:0] rf [31:0]; // our 32bit 32 registers
+    reg [31:0] rf [0:31]; // our 32bit 32 registers
 
     assign rs1_data = (rs1 != 0) ? rf[rs1] : 32'b0;
     assign rs2_data = (rs2 != 0) ? rf[rs2] : 32'b0;
