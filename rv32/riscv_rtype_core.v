@@ -70,7 +70,8 @@ module riscv_rtype_core (
         .mem_write(mem_write),
         .addr(alu_result),
         .write_data(rs2_data),
-        .read_data(read_data)
+        .read_data(read_data),
+        .func3(instr[14:12])
     );
 
     assign writeback_data = (result_src) ? read_data : alu_result;
