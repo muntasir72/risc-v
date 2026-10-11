@@ -4,7 +4,8 @@ module riscv_rtype_core (
 );
     wire [31:0] pc, instr;
     wire [31:0] rs1_data, rs2_data, alu_result;
-    wire reg_write;
+    wire [31:0] imm, src_b;
+    wire reg_write, alu_src;
     wire [5:0] alu_control;
 
     // 1. PC Logic
@@ -21,13 +22,20 @@ module riscv_rtype_core (
         .instr(instr)
     );
 
+    // Immediate Generator
+    immgen ig (
+        .instr(instr),
+        .imm(imm)
+    );
+
     // 3. Control Unit
     control_unit ctrl (
         .opcode(instr[6:0]), 
         .func3(instr[14:12]), 
         .func7(instr[31:25]),
         .reg_write(reg_write), 
-        .alu_control(alu_control)
+        .alu_control(alu_control),
+        .alu_src(alu_src)
     );
 
     // 4. Register File 
@@ -42,12 +50,16 @@ module riscv_rtype_core (
         .rs2_data(rs2_data)
     );
 
+    assign src_b = (alu_src) ? imm : rs2_data;
+
     // 5. ALU 
     alu alu_inst (
         .src_a(rs1_data), 
-        .src_b(rs2_data), 
+        .src_b(src_b), 
         .alu_control(alu_control), 
         .alu_result(alu_result)
     );
+
+
 
 endmodule
