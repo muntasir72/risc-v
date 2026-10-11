@@ -4,6 +4,7 @@ module control_unit (
     input wire [6:0] func7,
     output reg reg_write, alu_src, mem_write, branch, jump,
     output reg [1:0] result_src,
+    output reg [1:0] alu_src_a,
     output reg [5:0] alu_control
 );
 
@@ -68,6 +69,20 @@ module control_unit (
         else if (opcode == 7'b1100111) begin
             jump = 1'b1; reg_write = 1'b1; result_src = 2'b10; // Save PC+4 to register
             alu_src = 1'b1; alu_control = 6'b000000;           // ALU computes (rs1 + imm)
+        end
+        // LUI (Load Upper Immediate)
+        else if (opcode == 7'b0110111) begin
+            alu_src_a = 2'b10;       // Route 0 into ALU src_a
+            alu_src = 1'b1;          // Route imm into ALU src_b
+            reg_write = 1'b1;        // Save result
+            alu_control = 6'b000000; // ALU calculates (0 + imm)
+        end
+        // AUIPC
+        else if (opcode == 7'b0010111) begin
+            alu_src_a = 2'b01;       // Route PC into ALU src_a
+            alu_src = 1'b1;          // Route imm into ALU src_b
+            reg_write = 1'b1;        // Save result
+            alu_control = 6'b000000; // ALU calculates (PC + imm)
         end
     end
 

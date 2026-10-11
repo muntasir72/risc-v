@@ -1,16 +1,16 @@
-module riscv_rtype_core (
+module riscv_core (
     input wire clk,
     input wire reset
 );
     // Wires connecting all the parts together
     wire [31:0] pc, next_pc, pc_plus_4, pc_target;
     wire [31:0] instr;
-    wire [31:0] rs1_data, rs2_data, imm, src_b;
+    wire [31:0] rs1_data, rs2_data, imm, src_b, src_a;
     wire [31:0] alu_result, read_data, writeback_data;
     
     wire reg_write, alu_src, mem_write;
     wire branch, jump, br_taken, pc_src;
-    wire [1:0] result_src;
+    wire [1:0] result_src, alu_src_a;
     wire [5:0] alu_control;
 
     // STAGE 1: FETCH
@@ -45,7 +45,8 @@ module riscv_rtype_core (
         .mem_write(mem_write), 
         .result_src(result_src),
         .branch(branch), 
-        .jump(jump)
+        .jump(jump),
+        .alu_src_a(alu_src_a)
     );
 
     // Extracts any hardcoded numbers from the instruction
@@ -67,13 +68,15 @@ module riscv_rtype_core (
     );
 
     // STAGE 3: EXECUTE
+    // Choose between rs1_data, pc, or 0 for ALU input A
+    assign src_a = (alu_src_a == 2'b00) ? rs1_data : (alu_src_a == 2'b01) ? pc : 32'b0;
 
     // Choose between a register value or a hardcoded number
     assign src_b = (alu_src) ? imm : rs2_data;
 
     // Perform AL operations
     alu alu_inst (
-        .src_a(rs1_data), 
+        .src_a(src_a), 
         .src_b(src_b), 
         .alu_control(alu_control), 
         .alu_result(alu_result)
