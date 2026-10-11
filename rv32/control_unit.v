@@ -17,6 +17,7 @@ module control_unit (
         result_src = 2'b00;
         branch = 1'b0;
         jump = 1'b0;
+        alu_src_a = 2'b00;
 
         // R-Type or I-Type
         if (opcode == 7'b0110011 || opcode == 7'b0010011) begin
