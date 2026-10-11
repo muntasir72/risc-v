@@ -4,13 +4,13 @@ module control_unit (
     input wire [2:0] func3,
     input wire [6:0] func7,
     output reg reg_write,
-    output reg [2:0] alu_control
+    output reg [5:0] alu_control
 );
 
     always @(*) begin
         // Safe defaults: do not write for invalid instructions
         reg_write = 1'b0;
-        alu_control = 3'b111;
+        alu_control = 6'b111111;
 
         if (opcode == 7'b0110011) begin
             case (func3)
@@ -18,11 +18,19 @@ module control_unit (
                 // ADD and SUB
                 3'b000: begin
                     if (func7 == 7'b0000000) begin
-                        alu_control = 3'b000; // ADD
+                        alu_control = 6'b000000; // ADD
                         reg_write = 1'b1;
                     end
                     else if (func7 == 7'b0100000) begin
-                        alu_control = 3'b001; // SUB
+                        alu_control = 6'b000001; // SUB
+                        reg_write = 1'b1;
+                    end
+                end
+                
+                // SLL
+                3'b001: begin
+                    if(func7 == 7'b0000000) begin
+                        alu_control = 6'b000010;
                         reg_write = 1'b1;
                     end
                 end
@@ -30,7 +38,36 @@ module control_unit (
                 // SLT
                 3'b010: begin
                     if (func7 == 7'b0000000) begin
-                        alu_control = 3'b101;
+                        alu_control = 6'b000011;
+                        reg_write = 1'b1;
+                    end
+                end
+
+
+                // SLTU
+                3'b011: begin
+                    if (func7 == 7'b0000000) begin
+                        alu_control = 6'b000100;
+                        reg_write = 1'b1;
+                    end
+                end
+
+                // XOR
+                3'b100: begin
+                    if (func7 == 7'b0000000) begin
+                        alu_control = 6'b000101;
+                        reg_write = 1'b1;
+                    end
+                end
+
+                // SRL and SRA
+                3'b101: begin
+                    if (func7 == 7'b0000000) begin
+                        alu_control = 6'b000110;
+                        reg_write = 1'b1;
+                    end
+                    else if(func7 == 7'b0100000) begin
+                        alu_control = 6'b000111;
                         reg_write = 1'b1;
                     end
                 end
@@ -38,7 +75,7 @@ module control_unit (
                 // OR
                 3'b110: begin
                     if (func7 == 7'b0000000) begin
-                        alu_control = 3'b011;
+                        alu_control = 6'b001000;
                         reg_write = 1'b1;
                     end
                 end
@@ -46,7 +83,7 @@ module control_unit (
                 // AND
                 3'b111: begin
                     if (func7 == 7'b0000000) begin
-                        alu_control = 3'b010;
+                        alu_control = 6'b001001;
                         reg_write = 1'b1;
                     end
                 end

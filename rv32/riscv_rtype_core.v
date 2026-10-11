@@ -5,7 +5,7 @@ module riscv_rtype_core (
     wire [31:0] pc, instr;
     wire [31:0] rs1_data, rs2_data, alu_result;
     wire reg_write;
-    wire [2:0] alu_control;
+    wire [5:0] alu_control;
 
     // 1. PC Logic
     pc_reg pcreg (
