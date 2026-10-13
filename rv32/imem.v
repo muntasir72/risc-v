@@ -1,11 +1,11 @@
 module imem (
-    input wire [31:0] pc,           // value of pc
-    output wire [31:0] instr        // instruction
+    input wire [31:0] pc,           
+    output wire [31:0] instr        
 );
-    reg [31:0] ROM [63:0];
-    assign instr = ROM[pc[7:2]];   // instruction gets the value at ROM[pc[7:2]]
+    reg [31:0] ROM [0:63];
+    assign instr = ROM[pc[7:2]];   
 
     initial begin
-        $readmemh("program.hex", ROM); // program.hex contains the instruction to be executed in 32bit hexadecimal format
+        $readmemh("program.hex", ROM); 
     end
-endmodule   
+endmodule

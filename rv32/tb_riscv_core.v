@@ -32,8 +32,9 @@ module tb_riscv_core;
     end
 
     // Monitor the Program Counter to print execution progress to the console
-    initial begin
-        $monitor("Time = %0t | Reset = %b | PC = %h", $time, reset, uut.pc);
+initial begin
+        $monitor("PC = %d | x1 = %d | x2 = %d | x3 = %d | x4 = %d | x5 = %d | x6 = %d | RAM[1] = %d", 
+        uut.pc, uut.rf.rf[1], uut.rf.rf[2], uut.rf.rf[3], uut.rf.rf[4], uut.rf.rf[5], uut.rf.rf[6], uut.dm.RAM[1]);
     end
 
     // Generate a VCD file to view waveforms in tools like GTKWave
