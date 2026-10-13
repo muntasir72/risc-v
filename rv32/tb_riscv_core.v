@@ -25,7 +25,7 @@ module tb_riscv_core;
         reset = 0;
 
         // Run the simulation for 500ns (adjust based on your program's length)
-        #500;
+        #150;
         
         $display("Simulation finished.");
         $finish;
